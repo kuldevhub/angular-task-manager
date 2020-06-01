@@ -14,4 +14,10 @@ export class ProjectsService {
   getAllProjects(): Observable<Project[]>{
     return this.httpClient.get<Project[]>(API_URL + '/api/projects');
   }
+  insertProject(newProject: Project):Observable<Project>{
+    return this.httpClient.post<Project>(API_URL + "/api/projects",newProject)
+  }
+  updateProject(existingProject: Project):Observable<Project>{
+    return this.httpClient.put<Project>(API_URL + "/api/projects",existingProject)
+  }
 }

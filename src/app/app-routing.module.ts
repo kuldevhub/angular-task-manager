@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {DashboardComponent} from './admin/dashboard/dashboard.component';
 import {AboutComponent} from './admin/about/about.component';
 import {ProjectsComponent} from './admin/projects/projects.component';
+
 const routes: Routes = [
   {path:"dashboard",component:DashboardComponent},
   {path:"about",component:AboutComponent},

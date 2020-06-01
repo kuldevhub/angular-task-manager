@@ -1,7 +1,7 @@
 export class Project {
     projectID: number;
     projectName: string;
-    dateOfStart: string;
+    dateOfStart: Date;
     teamSize: number;
 
     constructor(){

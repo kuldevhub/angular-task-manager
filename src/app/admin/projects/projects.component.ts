@@ -23,6 +23,11 @@ searchText: string = "";
       this.projects = response;
 
     }
+    // ,
+    // (error) =>{
+    //   console.log(error)
+    //   alert("Authentication Failed");
+    // }
 );
 }
 onSaveClick(){

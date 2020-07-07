@@ -30,9 +30,9 @@ export class ProjectsService {
     .pipe(map(
       (data: Project[]) => {
         // alert("project service response SUCCESS")
-        for(let i=0;i<data.length;i++){
-          data[i].teamSize =  data[i].teamSize * 100;
-        }
+        // for(let i=0;i<data.length;i++){
+        //   data[i].teamSize =  data[i].teamSize * 100;
+        // }
         return data;
       },
       (error)=>{
@@ -40,6 +40,11 @@ export class ProjectsService {
         console.log(error);
       }
     ));
+  }
+
+  getProjectByProjectId(ProjectID: number): Observable<Project>
+  {
+    return this.httpClient.get<Project>(API_URL + "/api/projects/"+ProjectID,{responseType: "json"});
   }
   insertProject(newProject: Project):Observable<Project>{
     return this.httpClient.post<Project>(API_URL + "/api/projects",newProject,{responseType:"json"})

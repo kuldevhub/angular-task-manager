@@ -1,13 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {ProjectsService} from '../../projects.service';
 import { Project } from 'src/app/project';
+import { ClientLocation } from 'src/app/client-location';
+import { ClientLocationsService } from 'src/app/client-locations.service';
+import { NgForm } from '@angular/forms';
+import * as $ from "jquery";
 @Component({
   selector: 'app-projects',
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss']
 })
 export class ProjectsComponent implements OnInit {
-projects:Project[];
+projects:Project[] = [];
+clientLocations: ClientLocation[] = [];
+showLoading: boolean = true;
+
 newProject: Project = new Project();
 editProject: Project = new Project();
 editIndex: number = null;
@@ -15,13 +22,16 @@ deleteProject:Project = new Project();
 deleteIndex: number = null;
 searchBy: string = "ProjectName";
 searchText: string = "";
-  constructor(private projectsService:ProjectsService) { }
+
+@ViewChild("newForm") newForm: NgForm;
+
+  constructor(private projectsService:ProjectsService, private clientLocationsService: ClientLocationsService) { }
 
   ngOnInit(): void {
     this.projectsService.getAllProjects().subscribe(
     (response:Project[]) => {
       this.projects = response;
-
+      this.showLoading = false;
     }
     // ,
     // (error) =>{
@@ -29,8 +39,22 @@ searchText: string = "";
     //   alert("Authentication Failed");
     // }
 );
+this.clientLocationsService.getClientLocations().subscribe(
+  (response)=>{
+    this.clientLocations = response;
+  }
+)
+
+}
+
+onNewClick(event)
+{
+  this.newForm.resetForm();
 }
 onSaveClick(){
+if(this.newForm.valid)
+{
+  this.newProject.clientLocation.clientLocationId = 0;
 this.projectsService.insertProject(this.newProject).subscribe((response)=> {
    //Add Project to Grid
   var p: Project = new Project();
@@ -38,6 +62,10 @@ this.projectsService.insertProject(this.newProject).subscribe((response)=> {
   p.projectName = response.projectName;
   p.dateOfStart = response.dateOfStart;
   p.teamSize = response.teamSize;
+  p.clientLocation = response.clientLocation;
+  p.active = response.active;
+  p.clientLocationId = response.clientLocationId;
+  p.status = response.status;
   this.projects.push(p);
   // this.projects.push(this.newProject);
   //Clear New Project Dialog - TextBoxes
@@ -45,9 +73,15 @@ this.projectsService.insertProject(this.newProject).subscribe((response)=> {
   this.newProject.projectName = null;
   this.newProject.dateOfStart = null;
   this.newProject.teamSize = null;
+  this.newProject.active = false;
+  this.newProject.clientLocationId = null;
+  this.newProject.status = null;
+
+    $("#newFormCancel").trigger("click");
 }, (error) => {
   console.log(error);
 });
+}
 }
 
 onEditClick(event, index: number){
@@ -55,6 +89,10 @@ onEditClick(event, index: number){
   this.editProject.projectName = this.projects[index].projectName;
   this.editProject.dateOfStart = this.projects[index].dateOfStart;
   this.editProject.teamSize = this.projects[index].teamSize;
+  this.editProject.active = this.projects[index].active;
+  this.editProject.clientLocationId = this.projects[index].clientLocationId;
+  this.editProject.clientLocation = this.projects[index].clientLocation;
+  this.editProject.status =this.projects[index].status;
   this.editIndex = index;
 }
 
@@ -66,6 +104,10 @@ onUpdateClick(){
       p.projectName = response.projectName;
       p.dateOfStart = response.dateOfStart;
       p.teamSize = response.teamSize;
+      p.clientLocation = response.clientLocation;
+      p.active = response.active;
+      p.clientLocationId = response.clientLocationId;
+      p.status = response.status;
       this.projects[this.editIndex] = p;
 
       this.editProject.projectID = null;

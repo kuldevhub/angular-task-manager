@@ -53,6 +53,8 @@ export class LoginService {
     var token = sessionStorage.getItem("currentUser")? JSON.parse(sessionStorage.getItem("currentUser")).token: null;
     if(this.jwtHelperService.isTokenExpired())
     {
+      sessionStorage.removeItem("currentUser");
+      this.currentUserName = null;
       return false;
     }
     else{
